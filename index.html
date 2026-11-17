@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#be185d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Rose Shop" />
+  <title>Rose Shop - Order & Sales Manager</title>
+  <link id="manifest-placeholder" rel="manifest" />
+  <style>
+    :root {
+      --bg-pink: #fdf2f8;
+      --card-bg: #ffffff;
+      --rose-primary: #be185d;
+      --rose-dark: #9d174d;
+      --rose-light: #fce7f3;
+      --rose-border: #fbcfe8;
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background-color: var(--bg-pink);
+      color: var(--text-main);
+      padding-bottom: 40px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+    .header {
+      background: linear-gradient(135deg, #be185d, #db2777);
+      color: white;
+      padding: 18px 16px;
+      border-radius: 18px;
+      box-shadow: 0 6px 18px rgba(190, 24, 93, 0.22);
+      margin-bottom: 14px;
+    }
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .brand h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+    .brand p {
+      font-size: 0.78rem;
+      opacity: 0.9;
+    }
+    .offline-badge {
+      background: rgba(255,255,255,0.22);
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .date-filter-bar {
+      display: flex;
+      gap: 8px;
+      background: rgba(255,255,255,0.16);
+      padding: 6px;
+      border-radius: 12px;
+    }
+    .date-filter-bar input, .date-filter-bar select {
+      background: white;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--rose-dark);
+      flex: 1;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 2px 10px rgba(190, 24, 93, 0.06);
+      border: 1px solid var(--rose-border);
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--rose-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .summary-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .btn-sm {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1.5px solid var(--rose-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .btn-outline {
+      background: white;
+      color: var(--rose-primary);
+    }
+    .btn-solid {
+      background: var(--rose-primary);
+      color: white;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .stat-box {
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--bg-pink);
+      border: 1px solid var(--rose-border);
+    }
+    .stat-box.highlight {
+      background: linear-gradient(135deg, #9d174d, #be185d);
+      color: white;
+      border: none;
+    }
+    .stat-label {
+      font-size: 0.74rem;
+      opacity: 0.85;
+      margin-bottom: 4px;
+    }
+    .stat-val {
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+    .stat-sub {
+      font-size: 0.7rem;
+      margin-top: 3px;
+      opacity: 0.85;
+    }
+    .payment-pills {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--rose-border);
+    }
+    .pill {
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .pill-telebirr { background: #e0f2fe; color: #0369a1; }
+    .pill-cbe { background: #f3e8ff; color: #6b21a8; }
+    .pill-cash { background: #dcfce7; color: #15803d; }
+    .pill-unpaid { background: #fef3c7; color: #b45309; }
+    .form-group {
+      margin-bottom: 11px;
+    }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+    input[type="text"], input[type="tel"], input[type="number"], input[type="date"], select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 11px;
+      font-size: 0.92rem;
+      background: #fff;
+      color: var(--text-main);
+      transition: border-color 0.15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--rose-primary);
+    }
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .chip {
+      background: var(--rose-light);
+      color: var(--rose-dark);
+      border: 1px solid var(--rose-border);
+      border-radius: 99px;
+      padding: 4px 10px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .chip:active {
+      background: var(--rose-primary);
+      color: white;
+    }
+    .total-preview {
+      background: var(--rose-light);
+      border: 1.5px solid var(--rose-primary);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 12px 0;
+    }
+    .total-preview span {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--rose-dark);
+    }
+    .total-preview strong {
+      font-size: 1.25rem;
+      color: var(--rose-primary);
+    }
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #be185d, #db2777);
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 13px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(190, 24, 93, 0.25);
+    }
+    .btn-cancel-edit {
+      width: 100%;
+      background: #f3f4f6;
+      color: #4b5563;
+      border: none;
+      padding: 10px;
+      border-radius: 11px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-top: 8px;
+      cursor: pointer;
+      display: none;
+    }
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+    .tab-btn {
+      padding: 6px 12px;
+      border-radius: 99px;
+      border: 1px solid var(--rose-border);
+      background: white;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--rose-primary);
+      color: white;
+      border-color: var(--rose-primary);
+    }
+    .search-box {
+      margin-bottom: 10px;
+    }
+    .order-item {
+      border: 1.5px solid var(--rose-border);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: #fff;
+      position: relative;
+    }
+    .order-item.is-cancelled {
+      background: #fef2f2;
+      border-color: #fecaca;
+      opacity: 0.9;
+    }
+    .order-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+    .cust-name {
+      font-weight: 800;
+      font-size: 0.96rem;
+      color: var(--text-main);
+    }
+    .cust-phone {
+      font-size: 0.8rem;
+      color: var(--rose-primary);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .order-total-tag {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--rose-dark);
+      text-align: right;
+    }
+    .is-cancelled .order-total-tag {
+      text-decoration: line-through;
+      color: var(--danger);
+    }
+    .order-details {
+      font-size: 0.83rem;
+      color: #4b5563;
+      line-height: 1.45;
+      margin-bottom: 8px;
+      background: #fdf2f8;
+      padding: 8px 10px;
+      border-radius: 9px;
+    }
+    .is-cancelled .order-details {
+      background: #fee2e2;
+    }
+    .badges-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 6px;
+    }
+    .badge-paid { background: #dcfce7; color: #166534; }
+    .badge-unpaid { background: #fef3c7; color: #92400e; }
+    .badge-delivered { background: #dbeafe; color: #1e40af; }
+    .badge-pending { background: #f3f4f6; color: #374151; }
+    .badge-cancelled { background: #fee2e2; color: #991b1b; }
+    .badge-method { background: #fce7f3; color: #9d174d; }
+    .order-actions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      border-top: 1px solid #f3f4f6;
+      padding-top: 8px;
+    }
+    .act-btn {
+      padding: 6px 4px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #374151;
+      cursor: pointer;
+      text-align: center;
+    }
+    .act-btn.cancel-toggle { color: #b91c1c; border-color: #fecaca; background: #fef2f2; }
+    .act-btn.edit-btn { color: #0369a1; border-color: #bae6fd; background: #f0f9ff; }
+    .act-btn.copy-btn { color: #047857; border-color: #a7f3d0; background: #ecfdf5; }
+    .empty-state {
+      text-align: center;
+      padding: 28px 12px;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 99px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-top">
+        <div class="brand">
+          <div class="brand-icon">🌹</div>
+          <div>
+            <h1>Rose Shop</h1>
+            <p>ትዕዛዝ እና የቀን ሽያጭ መቆጣጠሪያ</p>
+          </div>
+        </div>
+        <span class="offline-badge">● Offline Ready</span>
+      </div>
+      <div class="date-filter-bar">
+        <input type="date" id="filterDate" />
+        <select id="filterScope">
+          <option value="day">የተመረጠው ቀን (Selected Day)</option>
+          <option value="all">ሁሉም ቀናት (All Dates)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <span>📊 የሽያጭ ማጠቃለያ (Summary)</span>
+      </div>
+      <div class="summary-actions">
+        <button class="btn-sm btn-outline" onclick="copyDailyReport()">📋 ሪፖርት ኮፒ (Copy)</button>
+        <button class="btn-sm btn-solid" onclick="exportCSV()">📥 Excel / CSV አውርድ</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box highlight">
+          <div class="stat-label">አጠቃላይ ሽያጭ (Total)</div>
+          <div class="stat-val" id="sumTotal">0 ETB</div>
+          <div class="stat-sub">ያለ ሰርዝ ትዕዛዞች</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">የዕቃ ሽያጭ (Products)</div>
+          <div class="stat-val" id="sumProducts">0 ETB</div>
+          <div class="stat-sub">ያለ ዴሊቨሪ ዋጋ</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">የዴሊቨሪ ገቢ (Delivery)</div>
+          <div class="stat-val" id="sumDelivery">0 ETB</div>
+          <div class="stat-sub">የመላኪያ ሂሳብ</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">የትዕዛዝ ብዛት (Orders)</div>
+          <div class="stat-val" id="sumOrders">0</div>
+          <div class="stat-sub" id="sumCancelledSub">0 ተሰርዟል (Cancelled)</div>
+        </div>
+      </div>
+      <div class="payment-pills">
+        <div class="pill pill-telebirr">ቴሌብር (Telebirr): <span id="payTelebirr">0</span> ETB</div>
+        <div class="pill pill-cbe">CBE / ባንክ: <span id="payCBE">0</span> ETB</div>
+        <div class="pill pill-cash">ጥሬ ገንዘብ (Cash): <span id="payCash">0</span> ETB</div>
+        <div class="pill pill-unpaid">ያልተከፈለ (Unpaid): <span id="payUnpaid">0</span> ETB</div>
+      </div>
+    </div>
+
+    <div class="card" id="formCard">
+      <div class="section-title">
+        <span id="formTitle">➕ አዲስ ትዕዛዝ መመዝገቢያ (New Order)</span>
+      </div>
+      <form id="orderForm" onsubmit="saveOrder(event)">
+        <input type="hidden" id="editId" value="" />
+        <div class="row-2">
+          <div class="form-group">
+            <label>ቀን (Order Date)</label>
+            <input type="date" id="orderDate" required />
+          </div>
+          <div class="form-group">
+            <label>የትዕዛዝ ሁኔታ (Status)</label>
+            <select id="orderStatus">
+              <option value="Pending">በመጠባበቅ ላይ (Pending)</option>
+              <option value="Delivered">ደርሷል (Delivered)</option>
+              <option value="Cancelled">ተሰርዟል (Cancelled)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label>የደንበኛ ስም (Customer Name)</label>
+            <input type="text" id="custName" placeholder="ለምሳሌ፡ ሳራ" required />
+          </div>
+          <div class="form-group">
+            <label>ስልክ ቁጥር (Phone)</label>
+            <input type="tel" id="custPhone" placeholder="09..." />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>አድራሻ (Delivery Location)</label>
+          <input type="text" id="custAddress" placeholder="ሰፈር / ልዩ ቦታ ይጻፉ..." required />
+          <div class="quick-chips">
+            <span class="chip" onclick="setAddress('Bole (ቦሌ)', 150)">ቦሌ (150)</span>
+            <span class="chip" onclick="setAddress('Megenagna (መገናኛ)', 150)">መገናኛ (150)</span>
+            <span class="chip" onclick="setAddress('CMC / Ayat (ሲኤምሲ/አያት)', 200)">CMC/አያት (200)</span>
+            <span class="chip" onclick="setAddress('Piassa / Arat Kilo (ፒያሳ)', 150)">ፒያሳ (150)</span>
+            <span class="chip" onclick="setAddress('Mexico / Sarbet (ሜክሲኮ)', 150)">ሜክሲኮ (150)</span>
+            <span class="chip" onclick="setAddress('Jemo / Lebu (ጀሞ/ለቡ)', 200)">ጀሞ/ለቡ (200)</span>
+            <span class="chip" onclick="setAddress('Shop Pickup (ሱቅ መጥተው)', 0)">ሱቅ (0)</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>የታዘዙ ዕቃዎች ዝርዝር (Items Ordered)</label>
+          <textarea id="orderItems" rows="2" placeholder="ለምሳሌ፡ 2 ሄና፣ 1 ቅባት..." required></textarea>
+          <div class="quick-chips">
+            <span class="chip" onclick="appendItem('Henna (ሄና)', 350)">+ ሄና (350)</span>
+            <span class="chip" onclick="appendItem('Kesil (ቅስል)', 300)">+ ቅስል (300)</span>
+            <span class="chip" onclick="appendItem('Meshat (መሻጥ)', 400)">+ መሻጥ (400)</span>
+            <span class="chip" onclick="appendItem('Kibat (ቅባት)', 250)">+ ቅባት (250)</span>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label>የዕቃ ዋጋ (Product Price ETB)</label>
+            <input type="number" id="productPrice" min="0" step="any" placeholder="0" oninput="updateLiveTotal()" required />
+          </div>
+          <div class="form-group">
+            <label>የዴሊቨሪ ዋጋ (Delivery Fee ETB)</label>
+            <input type="number" id="deliveryFee" min="0" step="any" value="0" oninput="updateLiveTotal()" />
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label>የክፍያ ዓይነት (Payment Method)</label>
+            <select id="paymentMethod">
+              <option value="Telebirr">ቴሌብር (Telebirr)</option>
+              <option value="CBE / Bank">CBE / ባንክ</option>
+              <option value="Cash">ጥሬ ገንዘብ (Cash)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>የክፍያ ሁኔታ (Payment Status)</label>
+            <select id="paymentStatus">
+              <option value="Paid">ተከፍሏል (Paid)</option>
+              <option value="Unpaid">አልተከፈለም (Unpaid)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="total-preview">
+          <span>አጠቃላይ ሂሳብ (Grand Total):</span>
+          <strong id="liveTotalDisplay">0 ETB</strong>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">💾 ትዕዛዙን መዝግብ (Save Order)</button>
+        <button type="button" class="btn-cancel-edit" id="cancelEditBtn" onclick="resetForm()">✖ ማስተካከያውን ተው (Cancel Edit)</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <span>📦 የትዕዛዞች ዝርዝር (Orders List)</span>
+      </div>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 በስም፣ ስልክ ወይም ሰፈር ይፈልጉ..." oninput="renderOrders()" />
+      </div>
+      <div class="filter-tabs">
+        <button class="tab-btn active" onclick="setStatusTab('ALL', this)">ሁሉም (All)</button>
+        <button class="tab-btn" onclick="setStatusTab('Pending', this)">በመጠባበቅ (Pending)</button>
+        <button class="tab-btn" onclick="setStatusTab('Delivered', this)">የደረሱ (Delivered)</button>
+        <button class="tab-btn" onclick="setStatusTab('Unpaid', this)">ያልተከፈሉ (Unpaid)</button>
+        <button class="tab-btn" onclick="setStatusTab('Cancelled', this)">የተሰረዙ (Cancelled)</button>
+      </div>
+      <div id="ordersListContainer"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const manifestData = {
+      name: "Rose Shop Order & Sales Manager",
+      short_name: "Rose Shop",
+      start_url: ".",
+      display: "standalone",
+      background_color: "#fdf2f8",
+      theme_color: "#be185d",
+      icons: [{
+        src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23be185d'/><text x='50' y='68' font-size='56' text-anchor='middle'>🌹</text></svg>",
+        sizes: "192x192",
+        type: "image/svg+xml"
+      }]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/manifest+json'});
+    document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
+
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      const swCode = `
+        const CACHE_NAME = 'rose-shop-v1';
+        self.addEventListener('install', e => {
+          e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['./'])));
+          self.skipWaiting();
+        });
+        self.addEventListener('fetch', e => {
+          e.respondWith(
+            fetch(e.request).then(res => {
+              const copy = res.clone();
+              caches.open(CACHE_NAME).then(c => c.put(e.request, copy));
+              return res;
+            }).catch(() => caches.match(e.request))
+          );
+        });
+      `;
+      const swBlob = new Blob([swCode], {type: 'application/javascript'});
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+    }
+
+    const STORAGE_KEY = 'rose_shop_orders_v1';
+    let orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    let currentTab = 'ALL';
+
+    function getTodayISO() {
+      const now = new Date();
+      const offset = now.getTimezoneOffset();
+      const local = new Date(now.getTime() - (offset * 60 * 1000));
+      return local.toISOString().split('T')[0];
+    }
+
+    document.getElementById('filterDate').value = getTodayISO();
+    document.getElementById('orderDate').value = getTodayISO();
+
+    document.getElementById('filterDate').addEventListener('change', renderOrders);
+    document.getElementById('filterScope').addEventListener('change', renderOrders);
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    function setAddress(addr, fee) {
+      document.getElementById('custAddress').value = addr;
+      document.getElementById('deliveryFee').value = fee;
+      updateLiveTotal();
+    }
+
+    function appendItem(itemName, price) {
+      const itemsEl = document.getElementById('orderItems');
+      itemsEl.value = itemsEl.value ? itemsEl.value + ', 1 ' + itemName : '1 ' + itemName;
+      const priceEl = document.getElementById('productPrice');
+      priceEl.value = (parseFloat(priceEl.value) || 0) + price;
+      updateLiveTotal();
+    }
+
+    function updateLiveTotal() {
+      const p = parseFloat(document.getElementById('productPrice').value) || 0;
+      const d = parseFloat(document.getElementById('deliveryFee').value) || 0;
+      document.getElementById('liveTotalDisplay').textContent = (p + d).toLocaleString() + ' ETB';
+    }
+
+    function saveToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+    }
+
+    function saveOrder(e) {
+      e.preventDefault();
+      const editId = document.getElementById('editId').value;
+      const productPrice = parseFloat(document.getElementById('productPrice').value) || 0;
+      const deliveryFee = parseFloat(document.getElementById('deliveryFee').value) || 0;
+
+      const orderObj = {
+        id: editId || Date.now().toString(),
+        date: document.getElementById('orderDate').value,
+        status: document.getElementById('orderStatus').value,
+        custName: document.getElementById('custName').value.trim(),
+        custPhone: document.getElementById('custPhone').value.trim(),
+        custAddress: document.getElementById('custAddress').value.trim(),
+        items: document.getElementById('orderItems').value.trim(),
+        productPrice,
+        deliveryFee,
+        total: productPrice + deliveryFee,
+        paymentMethod: document.getElementById('paymentMethod').value,
+        paymentStatus: document.getElementById('paymentStatus').value
+      };
+
+      if (editId) {
+        const idx = orders.findIndex(o => o.id === editId);
+        if (idx !== -1) orders[idx] = orderObj;
+        showToast('✅ ትዕዛዙ ተስተካክሏል (Updated)');
+      } else {
+        orders.unshift(orderObj);
+        showToast('🌹 አዲስ ትዕዛዝ ተመዝግቧል (Saved)');
+      }
+
+      saveToStorage();
+      resetForm();
+      renderOrders();
+    }
+
+    function resetForm() {
+      document.getElementById('orderForm').reset();
+      document.getElementById('editId').value = '';
+      document.getElementById('orderDate').value = document.getElementById('filterDate').value || getTodayISO();
+      document.getElementById('deliveryFee').value = '0';
+      document.getElementById('formTitle').textContent = '➕ አዲስ ትዕዛዝ መመዝገቢያ (New Order)';
+      document.getElementById('submitBtn').textContent = '💾 ትዕዛዙን መዝግብ (Save Order)';
+      document.getElementById('cancelEditBtn').style.display = 'none';
+      updateLiveTotal();
+    }
+
+    function editOrder(id) {
+      const o = orders.find(x => x.id === id);
+      if (!o) return;
+      document.getElementById('editId').value = o.id;
+      document.getElementById('orderDate').value = o.date;
+      document.getElementById('orderStatus').value = o.status;
+      document.getElementById('custName').value = o.custName;
+      document.getElementById('custPhone').value = o.custPhone;
+      document.getElementById('custAddress').value = o.custAddress;
+      document.getElementById('orderItems').value = o.items;
+      document.getElementById('productPrice').value = o.productPrice;
+      document.getElementById('deliveryFee').value = o.deliveryFee;
+      document.getElementById('paymentMethod').value = o.paymentMethod;
+      document.getElementById('paymentStatus').value = o.paymentStatus;
+      updateLiveTotal();
+
+      document.getElementById('formTitle').textContent = '✏️ ትዕዛዝ ማስተካከያ (Edit Order)';
+      document.getElementById('submitBtn').textContent = '✅ ለውጡን አስቀምጥ (Update Order)';
+      document.getElementById('cancelEditBtn').style.display = 'block';
+      document.getElementById('formCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function toggleCancelStatus(id) {
+      const o = orders.find(x => x.id === id);
+      if (!o) return;
+      o.status = (o.status === 'Cancelled') ? 'Pending' : 'Cancelled';
+      saveToStorage();
+      renderOrders();
+      showToast(o.status === 'Cancelled' ? '❌ ትዕዛዙ ተሰርዟል (Cancelled)' : '🔄 ትዕዛዙ ተመልሷል (Restored)');
+    }
+
+    function togglePaidStatus(id) {
+      const o = orders.find(x => x.id === id);
+      if (!o) return;
+      o.paymentStatus = (o.paymentStatus === 'Paid') ? 'Unpaid' : 'Paid';
+      saveToStorage();
+      renderOrders();
+      showToast('💰 የክፍያ ሁኔታ ተቀይሯል');
+    }
+
+    function deleteOrder(id) {
+      if (!confirm('ይህን ትዕዛዝ ሙሉ በሙሉ ማጥፋት ይፈልጋሉ? (Delete permanently?)')) return;
+      orders = orders.filter(x => x.id !== id);
+      saveToStorage();
+      renderOrders();
+      showToast('🗑️ ትዕዛዙ ጠፍቷል');
+    }
+
+    function copyReceipt(id) {
+      const o = orders.find(x => x.id === id);
+      if (!o) return;
+      const text = `🌹 *Rose Shop Order*\n` +
+        `👤 ደንበኛ: ${o.custName} (${o.custPhone || '-'})\n` +
+        `📍 አድራሻ: ${o.custAddress}\n` +
+        `🛍️ ዕቃዎች: ${o.items}\n` +
+        `💵 የዕቃ ዋጋ: ${o.productPrice} ETB\n` +
+        `🚚 ዴሊቨሪ: ${o.deliveryFee} ETB\n` +
+        `💰 አጠቃላይ: ${o.total} ETB\n` +
+        `💳 ክፍያ: ${o.paymentMethod} (${o.paymentStatus})\n` +
+        `📌 ሁኔታ: ${o.status}`;
+      navigator.clipboard.writeText(text).then(() => showToast('📋 ደረሰኝ ኮፒ ተደርጓል!'));
+    }
+
+    function setStatusTab(tab, btn) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderOrders();
+    }
+
+    function getScopedOrders() {
+      const scope = document.getElementById('filterScope').value;
+      const selectedDate = document.getElementById('filterDate').value;
+      if (scope === 'all') return orders;
+      return orders.filter(o => o.date === selectedDate);
+    }
+
+    function renderOrders() {
+      const scoped = getScopedOrders();
+
+      let totalRev = 0, prodRev = 0, delivRev = 0;
+      let activeCount = 0, cancelledCount = 0;
+      let telebirr = 0, cbe = 0, cash = 0, unpaid = 0;
+
+      scoped.forEach(o => {
+        if (o.status === 'Cancelled') {
+          cancelledCount++;
+          return;
+        }
+        activeCount++;
+        totalRev += o.total;
+        prodRev += o.productPrice;
+        delivRev += o.deliveryFee;
+
+        if (o.paymentStatus === 'Unpaid') {
+          unpaid += o.total;
+        } else {
+          if (o.paymentMethod === 'Telebirr') telebirr += o.total;
+          else if (o.paymentMethod === 'CBE / Bank') cbe += o.total;
+          else cash += o.total;
+        }
+      });
+
+      document.getElementById('sumTotal').textContent = totalRev.toLocaleString() + ' ETB';
+      document.getElementById('sumProducts').textContent = prodRev.toLocaleString() + ' ETB';
+      document.getElementById('sumDelivery').textContent = delivRev.toLocaleString() + ' ETB';
+      document.getElementById('sumOrders').textContent = activeCount;
+      document.getElementById('sumCancelledSub').textContent = `${cancelledCount} ተሰርዟል (Cancelled)`;
+
+      document.getElementById('payTelebirr').textContent = telebirr.toLocaleString();
+      document.getElementById('payCBE').textContent = cbe.toLocaleString();
+      document.getElementById('payCash').textContent = cash.toLocaleString();
+      document.getElementById('payUnpaid').textContent = unpaid.toLocaleString();
+
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = scoped.filter(o => {
+        if (currentTab === 'Pending' && o.status !== 'Pending') return false;
+        if (currentTab === 'Delivered' && o.status !== 'Delivered') return false;
+        if (currentTab === 'Cancelled' && o.status !== 'Cancelled') return false;
+        if (currentTab === 'Unpaid' && (o.paymentStatus !== 'Unpaid' || o.status === 'Cancelled')) return false;
+        if (q) {
+          const hay = `${o.custName} ${o.custPhone} ${o.custAddress} ${o.items}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      const container = document.getElementById('ordersListContainer');
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="empty-state">ምንም የተመዘገበ ትዕዛዝ የለም (No orders found)</div>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(o => {
+        const isCancelled = o.status === 'Cancelled';
+        const statusBadge = o.status === 'Delivered'
+          ? '<span class="badge badge-delivered">✅ ደርሷል (Delivered)</span>'
+          : o.status === 'Cancelled'
+          ? '<span class="badge badge-cancelled">❌ ተሰርዟል (Cancelled)</span>'
+          : '<span class="badge badge-pending">⏳ በመጠባበቅ (Pending)</span>';
+
+        const payBadge = o.paymentStatus === 'Paid'
+          ? '<span class="badge badge-paid" onclick="togglePaidStatus(\'' + o.id + '\')">💵 ተከፍሏል (Paid)</span>'
+          : '<span class="badge badge-unpaid" onclick="togglePaidStatus(\'' + o.id + '\')">⚠️ አልተከፈለም (Unpaid)</span>';
+
+        return `
+          <div class="order-item ${isCancelled ? 'is-cancelled' : ''}">
+            <div class="order-top">
+              <div>
+                <div class="cust-name">${escapeHTML(o.custName)}</div>
+                ${o.custPhone ? `<a class="cust-phone" href="tel:${escapeHTML(o.custPhone)}">📞 ${escapeHTML(o.custPhone)}</a>` : ''}
+              </div>
+              <div class="order-total-tag">
+                ${o.total.toLocaleString()} ETB
+                <div style="font-size:0.7rem; font-weight:500; color:#6b7280;">${o.date}</div>
+              </div>
+            </div>
+            <div class="order-details">
+              <div><strong>📍 አድራሻ:</strong> ${escapeHTML(o.custAddress)}</div>
+              <div><strong>🛍️ ትዕዛዝ:</strong> ${escapeHTML(o.items)}</div>
+              <div><strong>🧾 ሂሳብ:</strong> ዕቃ ${o.productPrice} + ዴሊቨሪ ${o.deliveryFee} ETB</div>
+            </div>
+            <div class="badges-row">
+              ${statusBadge}
+              ${payBadge}
+              <span class="badge badge-method">💳 ${escapeHTML(o.paymentMethod)}</span>
+            </div>
+            <div class="order-actions">
+              <button class="act-btn copy-btn" onclick="copyReceipt('${o.id}')">📋 ኮፒ</button>
+              <button class="act-btn edit-btn" onclick="editOrder('${o.id}')">✏️ አስተካክል</button>
+              <button class="act-btn cancel-toggle" onclick="toggleCancelStatus('${o.id}')">${isCancelled ? '🔄 መልስ' : '❌ ሰርዝ'}</button>
+              <button class="act-btn" onclick="deleteOrder('${o.id}')">🗑️ አጥፋ</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function escapeHTML(str) {
+      return String(str || '').replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+    }
+
+    function copyDailyReport() {
+      const dateLabel = document.getElementById('filterScope').value === 'all'
+        ? 'ሁሉም ቀናት (All Dates)'
+        : document.getElementById('filterDate').value;
+      const report = `🌹 *Rose Shop Sales Report (${dateLabel})*\n` +
+        `💰 አጠቃላይ ሽያጭ: ${document.getElementById('sumTotal').textContent}\n` +
+        `🛍️ የዕቃ ሽያጭ: ${document.getElementById('sumProducts').textContent}\n` +
+        `🚚 የዴሊቨሪ ገቢ: ${document.getElementById('sumDelivery').textContent}\n` +
+        `📦 ትዕዛዝ ብዛት: ${document.getElementById('sumOrders').textContent} (${document.getElementById('sumCancelledSub').textContent})
+` +
+        `📱 ቴሌብር: ${document.getElementById('payTelebirr').textContent} ETB | 🏦 CBE: ${document.getElementById('payCBE').textContent} ETB | 💵 Cash: ${document.getElementById('payCash').textContent} ETB | ⚠️ Unpaid: ${document.getElementById('payUnpaid').textContent} ETB`;
+      navigator.clipboard.writeText(report).then(() => showToast('📋 የሽያጭ ሪፖርት ኮፒ ተደርጓል!'));
+    }
+
+    function exportCSV() {
+      const scoped = getScopedOrders();
+      if (scoped.length === 0) {
+        showToast('⚠️ የሚወርድ መረጃ የለም');
+        return;
+      }
+      const headers = ['Date', 'Customer Name', 'Phone', 'Address', 'Items', 'Product Price', 'Delivery Fee', 'Total', 'Payment Method', 'Payment Status', 'Order Status'];
+      const rows = scoped.map(o => [
+        o.date, o.custName, o.custPhone, o.custAddress, o.items,
+        o.productPrice, o.deliveryFee, o.total, o.paymentMethod, o.paymentStatus, o.status
+      ].map(v => '"' + String(v || '').replace(/"/g, '""') + '"').join(','));
+
+      const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Rose_Shop_Sales_${document.getElementById('filterDate').value || 'All'}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('📥 Excel/CSV ፋይል ወርዷል!');
+    }
+
+    renderOrders();
+  </script>
+</body>
+</html>
